@@ -1,0 +1,139 @@
+\section{Design Patterns}
+\subsection{Listen}
+Listen sind ein häufig verwendets UI-ELement. \code{ListView} und \code{ExpandableListView} sind die implementierenden Klassen. Die Einträge können komplexe Layouts sein und es könne beliebige Java-Objekte dargestellt werden.
+\begin{lstlisting}[language=xml]
+<ListView
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:id="@+id/listView"/>
+\end{lstlisting}
+Da die ListView mit allen Java Klassen umgehen können muss, verwendet es das Adapter Design Pattern. Das Datenmodell soll unabhängig von der ListView bleiben, und der Adapter vermittelt zwischen Daten-Klassen und ListView.\\
+ListView und GridViews sind AdapterViews. Für das zuweisen eines Adapters wird \code{setAdapter()} verwendet.
+\begin{lstlisting}[language=xml]
+ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.rowlayout, R.id.label);
+listView.setAdapter(adapter);
+\end{lstlisting}
+Möchte man einen eigenen ArrayAdapter implementieren muss man in diesem die \code{getView} Methode überschreiben um zu kontrollieren, wie genau ein Eintrag aussieht.
+\begin{lstlisting}[language=java]
+View getView(int position, View convertView, ViewGroup parent);
+\end{lstlisting}
+Wobei \code{position} der Index ist, der dargestellt werden soll, \code{convertView} die alte View (oder null) ist, und \code{parent} den zukünftigen Parent. Die alte View wird aus Performancegründen mitgegeben, damit nicht immer eine neue Instanz des Layouts erstellt sondern nur die Daten aktualisiert werden. Eine ListView mit Checkboxen:
+\begin{lstlisting}[language=java]
+public View getView(int position, View convertView, ViewGroup parent) {
+  final Module module = moduleList.get(position);
+  if(convertView == null) {
+  LayoutInflater lf = (...)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+  convertView = lf.inflate(R.layout.rowlayout, null);
+  }
+  TextView tv = (...)convertView.findViewById(R.di.textView);
+  CheckBox cb = (...)convertView.findViewById(R.id.checkbox);
+  tv.setText("(" + module.getCode() + ")");
+  cb.setText(module.getName());
+  cb.setChecked(module.isSelected());
+  cb.setOnClickListener(new View.OnClickListener() {
+  @Override
+  public void onClick(View v) {
+    CheckBox b = (...)v;
+    module.setSelected(!b.isChecked());
+  }
+  });
+  return convertView;
+}
+\end{lstlisting}
+Die Performance der ListView ist nur bedingt gut. \code{findViewById} sind teure Operationen und diese werden mit komplexeren Layouts mehr. 
+\paragraph{View Tags} Views können getagged werden (\code{setTag(Object tag)}). Man kann das mit einem Key-Value Paar machen oder einfach mit einem Object. So kann man beliebige Daten an eine View anhängen. 
+\subsection{Recycler View} 
+Die RecylcerView hat mehrere Verbesserungen gegenüber den anderen beiden Views. Es können mehrere Layoutmanager definiert werden, es können Animationen für Hinzufügen und Entfernen von Einträgen gesetzt werden, und das Recyling von Elementen wurde fest eingebaut. Leider ist es mit der RecyclerView mühsamer das Click-Handling zu implementieren. Die Komponenten der RecylcerView sind:
+\begin{itemize}
+\item \textbf{Adapter:} Analog zu eigenem ArrayAdapter (leicht anderes API)
+\item \textbf{ViewHolder:} Klasse welche die Views zwischenspeichert
+\item \textbf{LayoutManager:} Defaults für übliche Layouts (optional)
+\item \textbf{ItemDecorator:} Trennlinien oder andere Dekoratoren um die Elemente (optional)
+\item \textbf{ItemAnimator:} Animiert hinzufügen, entfernen und scrolling von Elementen (optional)
+\end{itemize}
+\begin{lstlisting}[language=java][caption="RecyclerView Schnittstelle"]
+public class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
+  private ArrayList<Module> dataset;
+  public MyAdapter (ArrayList<Module> modules) {dataset = modules;}
+  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){ 
+  /* --- */
+  }
+  public onBindViewHolder(ViewHolder holder, int position) {
+  /* ... */
+  }
+}
+\end{lstlisting}
+
+\subsection{RecyclerView}
+Statt einer \code{ListView} nimmt man einfach eine \code{RecyclerView} (XML). Der Adapter ist dann aber anders als ein \code{ListView}-Adapter. Folgend ein \code{RecyclerView.Adapter}
+\begin{lstlisting}[language=java]
+public class NotesAdapter extends 
+  RecyclerView.Adapter<NotesAdapter.ViewHolder> {
+private Notes data;
+private ItemSelectionListener selectionListener;
+
+public NotesAdapter(Notes notes, 
+  ItemSelectionListener selectionListener) {
+  this.data = notes;
+  this.selectionListener = selectionListener;
+}
+class ViewHolder extends RecyclerView.ViewHolder {
+  TextView textView;
+  ViewHolder(View itemRoot) {
+    super(itemRoot);
+    textView = itemRoot.findViewById(R.id.textView);
+    textView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        selectionListener.onItemSelected(
+          ViewHolder.this.getAdapterPosition());
+      }
+    });
+  }
+}
+@Override
+public ViewHolder onCreateViewHolder(ViewGroup parent, 
+  int viewType) {
+  LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+  View view = inflater.inflate(R.layout.rowlayout, parent, false);
+  return new ViewHolder(view);
+}
+@Override
+public void onBindViewHolder(final ViewHolder holder, 
+  final int position) {
+  holder.textView.setText(data.get(position).getTitle());
+}
+@Override
+public int getItemCount() {
+  return data.getSize();
+}
+}
+\end{lstlisting}
+
+Die RecyclerView bemerkt Änderungen an den Daten nicht von selbst. Um eine Aktualisierung zu veranlassen:
+\begin{itemize}
+  \item \code{notifyDataSetChanged()}
+  \item \code{notifyItemChanged(positionToUpdate)}
+  \item \code{notifyItemInserted(insertPosition)}
+  \item \code{notifyItemRemoved(removePosition)}
+\end{itemize}
+
+Diese gibts auch noch in einer \code{notifyItemRange}-Variante
+\subsection{Design und Architektur Patterns}
+Um viele Klassen zu ordnen kann man beispielsweise die Multitier Architecture verwenden. Darin sind die Abhängigkeiten klar gerichtet und es existieren keine Zyklen. Um nun die Domain überwachbar zu machen, kann man das Observer Pattern implementieren.
+\paragraph{Swipe Refresh} Anstelle, dass unsere App sich selbst aktualisiert kann man das mit einem Swipe Refresh machen. Dafür braucht man eine Support Library.
+\begin{lstlisting}[language=xml]
+<android.support.v4.widget.SwipeRefreshLayout>
+  <android.support.v7.widget.RecyclerView/>
+</android.support.v4.widget.SwipeRefreshLayout>
+\end{lstlisting}
+\begin{lstlisting}[language=java]
+final SwipeRefreshLayout swipe = 
+  (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+  public void onRefresh() {
+  /*...*/
+  swipe.setRefreshing(false);
+  }
+});
+\end{lstlisting}

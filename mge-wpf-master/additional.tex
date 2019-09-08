@@ -1,0 +1,126 @@
+\section{CUIT}
+Annahmen: es gibt ein Fenster mit \code{Title="Login Window"}. In diesem Fenster gibt es zwei \code{Textbox}en mit LoginName und Password (Attribut \code{Name=}), und einen \code{Button} der sich LoginButton nennt. Stimmt das Login, so öffnet sich ein Fenster mit dem Titel \code{"Welcome Window"}, welches ein \code{Label} mit dem Namen NameLabel besitzt.
+
+Wir wollen nun den Usernamen und das Passwort abfüllen, OK klicken, und sehen ob das korrekte Fenster aufgeht.
+
+\begin{lstlisting}
+[TestClass]
+public class LoginWindowUiTest
+{
+  // Das Folgende kann immer gleich implementiert werden
+  // the directory in which the test is running
+  public string BaseDir => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+  // system under test (wpf app to be tested)
+  public string SutPath => Path.Combine(BaseDir, $"ch.hsr.wpf.03.login.exe");
+  
+  [TestMethod]
+  public void TestMethod1()
+  {
+  var app = Application.Launch(SutPath);
+  var window = app.GetWindow("Login Window", InitializeOption.NoCache);
+  var name = window.Get<TextBox>("LoginName");
+  var pw = window.Get<TextBox>("Password");
+  name.Text = "j.bond";
+  pw.Text = "topsecret";
+  var button = window.Get<Button>("LoginButton");
+  button.Click();
+  var win = app.GetWindow("Welcome Window", InitializeOption.NoCache);
+  var label = win.Get<Label>("NameLabel");
+  Assert.AreEqual("j.bond", label.Text);
+  win.Close();
+  app.Close();
+  }
+  
+}
+\end{lstlisting}
+
+\subsection{INotifyPropertyChanged}
+
+\begin{lstlisting}[language=java]
+// Clock.cs
+public class Clock:INotifyPropertyChanged
+{
+  private DateTime _time;
+  public DateTime Time {
+    get { return _time; }
+    set
+    {
+      if (value != _time)
+      {
+        _time = value;
+    
+        OnPropertyChanged(nameof(Time));
+        OnPropertyChanged(nameof(TimeString));
+      } 
+    }
+  }
+  public string TimeString => Time.ToString("dd.MM.yyyy HH:mm:ss");
+  public Clock()
+  {
+    Time = DateTime.Now;
+  }
+  public event PropertyChangedEventHandler PropertyChanged;
+  protected virtual void OnPropertyChanged(string propertyName = null)
+  {
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+  }
+}
+
+//App.xaml.cs
+public partial class App : Application
+{
+  public DispatcherTimer Timer { get; set; }
+  public Clock Clock { get; set; }
+  protected override void OnStartup(StartupEventArgs e)
+  {
+    Clock = new Clock();
+    Timer = new DispatcherTimer();
+    // Jede Sekunde das Tick-Event auslösen:
+    Timer.Interval = TimeSpan.FromSeconds(1);
+    Timer.Tick += (sender, args) =>
+    {
+      // Do something...
+      Clock.Time = DateTime.Now;
+    };
+    Timer.Start();
+    MainWindow = new MainWindow();
+    MainWindow.DataContext = Clock;
+    MainWindow.Show();
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=xml]
+<!-- MainWindow.xaml -->
+<Label ... Content="{Binding TimeString}" />
+\end{lstlisting}
+
+\section{MVVM}
+\paragraph{Model} Eigentliche Daten, Domain Objekte Kein
+Verhalten, Nicht zuständig für Formatierung, Nicht zu zuständig für Laden und Speichern
+\paragraph{ViewModel} View-Spezifische Objekte, welche Model um Daten/Berechnete Fields erweitern Enthalten Verhalten. Grundlage für DataBinding. Kontroverse bezgl. Laden. Kennt View nicht
+\paragraph{View} XAML + Code Behind(Wenig). Nutzt Binding z.B. Button->Commands, TextBox->String, Event->Command(Benötigt Library)
+\paragraph{Anmerkung} Auf Interfaces Referenzieren die eine andere Komponente implementiert ist ok.
+\paragraph{StartupCode} Wer erstellt VMs, Vs und lädt Ms? Spezielles AppVM verwenden, welches beim Start erzeugt wird. Zusätzliche VMs werden vom APPVM erzeugt (Factory). Views werden direkt innerhalb der View erzeugt. VM erzeugt, lädt und speichert Ms
+
+\begin{lstlisting}
+// App.xaml Startup Uri entfernen
+
+// App Class
+public AppVm {get; set; }
+protected override void onStartup(StartupEventArgs e)
+{
+    base.OnStartup(e);
+    AppVm = new AppVm
+    
+    // hier: eine der Varianten unten
+}
+
+MainWindow = new MainView();
+MainWindow.Show();
+
+var vm = new ViewModel();
+MainWindow = MainView();
+MainView.DataContext = vm;
+MainWindow.Show();
+\end{lstlisting}

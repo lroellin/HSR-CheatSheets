@@ -1,0 +1,154 @@
+\section{GUI Design}
+\subsection{WPF Ressourcen}
+Mit WPF Ressourcen kann man nützliche Objekte (Brushes, Styles, Templates etc.) zentral definieren und wiederverwenden.
+\subsection{Resources}
+\paragraph{Physikalische Ressourcen} In den File Properties kann man eine Datei als WPF-Ressource deklarieren welche dann in die Binärdatei einkompiliert werden. Zugegriffen kann dann mittels Resource-Key (relativer Pfadname).
+\paragraph{Resource} Jedes beliebige Objekt in XAML kann als Ressource definiert werden. Es bird mit einem Key-Attribut und dem x-Namespace benannt.
+\begin{lstlisting}[language=xml]
+<Application.Resources>
+    <SolidColorBrush x:Key ="MyButtonBackground" Color="#EEEEEE" />
+</Application.Resources>
+\end{lstlisting}
+Unter diesem Key sind Ressourcen dann auch ansprechbar
+\begin{lstlisting}[language=xml]
+<Button Background="{StaticResource MyButtonBackground}" Content="Save" />
+\end{lstlisting}
+\paragraph{ResourceDictionary} Ist ein Behälter um Ressourcen zu speichern. Es indexiert nach dem Ressourcen-Namen (\verb+x:Key+) und kann in allen Elementen, welche von FrameworkElement ableiten, verwendet werden. Wenn auf eine Ressource zugegriffen werden möchte, wird \begin{enumerate*}[label=\itshape \arabic*\upshape.]\item Key im Element und allen Parent-Nodes gesucht (Logical Tree), \item dann wird der Key in \verb+Application.Resources+ gesucht, \item als letztes wird in System-Ressourcen gesucht.\end{enumerate*}. Die Reheinfolge im XAML-Code ist wichtig.
+\paragraph{System Ressources} Auf Ressourcen in Namespace \verb+System.Windows+ kann man mittels statischer Properties zugegriffen werden. Dazu gehören: \verb+SystemColors+, \verb+SystemFonts+ und \verb+SystemParamters+.
+\begin{lstlisting}[language=xml]
+StaticResource="{StaticResource[name]}"
+\end{lstlisting}
+Die Statische Bindung macht CompileTime Check und findet Fehler früh.
+\begin{lstlisting}[language=xml]
+DynamicResource="{DynamicResource[name]}"
+\end{lstlisting}
+Anstelle von \verb+[name]+ steht der Key der Ressource
+In der Dynamische Bindung wird ein RuntimeCheck gemacht und lässt dynamisch erzeugte und geladene Ressourcen zu. Beim Static Binding wird bei Objektkonstruktion ausgewertet, beim Dynamic Binding einmal pro Zugriff.
+\paragraph{FindResource} Mit der Methode \verb+FrameworkElement.FindResources+  können Zugriffe auf XAML Resourcen gemacht werden.
+\begin{lstlisting}
+var okText = (string)FindResource("OkText");
+var bgBrush = FindResource("DarkBrush") as Brush;
+\end{lstlisting}
+
+\subsubsection{Zugriff}
+
+\begin{enumerate}
+    \item Key wird im Element und in allen Parent-Nodes gesucht.
+    \item Key wird in Application.Resources gesucht.
+    \item Key wird in System-Ressourcen gesucht.
+\end{enumerate}
+
+
+\section{Data Trigger}
+(in \code{Style.Triggers} eingebunden, wie vorher. Beispiel: Style ist für ListBoxItem, rote Schrift wenn nicht mehr an Lager (\code{InStock == 0})
+\begin{lstlisting}
+<DataTrigger Binding="{Binding InStock}" Value="0">
+    <Setter Property="Foreground" Value="Red" />
+</DataTrigger>
+\end{lstlisting}
+
+\section{Visual State Manager}
+
+Ermöglicht innerhalb eines ControlTemplate-Elements unterschiedliche Darstellungen anhand eines Zustands.
+
+Wurde erst später (nach Triggern) eingeführt => mit Silverlight => Nicht weiter Besprochen.
+
+\section{Styles}
+
+\begin{lstlisting}
+<!-- App.xaml -->
+<Application x:Class="ModernUi.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ModernUi"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary Source="style.xaml"></ResourceDictionary>
+    </Application.Resources>
+</Application>
+
+<!-- Style.xaml -->
+<Window.Resources>
+    <!-- benannten Style als Basis benutzen -->
+    <Style x:Key="DefaultButtonStyle" TargetType="Button">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="Black" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="Black" />
+      <Setter Property="FontFamily" Value="Segoe UI" />
+      <Setter Property="Margin" Value="2" />
+      <Setter Property="Padding" Value="10 2 10 2" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <!-- Den obigen benannten Style erben und auf alle Buttons anwenden -->
+    <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}"> </Style>
+    <!-- für den Help Button noch einen abgeleiteten Style definieren --> <Style x:Key="MyHelpButtonStyle" TargetType="Button"
+           BasedOn="{StaticResource DefaultButtonStyle}">
+      <Setter Property="Foreground" Value="Gray" />
+      <Setter Property="BorderBrush" Value="Gray" />
+    </Style>
+</Window.Resources>
+
+<!-- Window.xaml -->
+<GradientStop Offset="0" Color="{StaticResource BaseColor}" />
+\end{lstlisting}
+
+\subsubsection{explizit}
+\begin{lstlisting}
+<Style x:Key="MyButtonStyle">
+    <Setter Property="Button.Foreground" Value="#000000" />
+    <Setter Property="Button.Background" Value="#FFFFFF" />
+    <!-- auch komplexes möglich -->
+    <Setter Property="Button.Background">
+        <Setter.Value>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Offset="0" Color="#dddddd"></GradientStop>
+                <GradientStop Offset="0.5" Color="#F0F0F0"></GradientStop>
+                <GradientStop Offset="1" Color="#dddddd"></GradientStop>
+            </LinearGradientBrush>
+        </Setter.Value>
+    </Setter>
+</Style>
+\end{lstlisting}
+
+Verwenden mit:\\\code{<Button Style="{StaticResource MyButtonStyle}" Content="Cancel" />}
+
+\subsubsection{implizite Styles}
+Man kann auch einen \code{TargetType="Button"} einfügen. Der Klassenname (\code{Button.Foreground}) kann dann weggelassen werden (\code{Foreground}).
+
+Lässt man den Key weg, gilt der Style für alle Elemente des Controls
+
+Man kann auch ableiten, mit \code{BasedOn={StaticResource MyButtonStyle}}.
+
+Möchte man aber den Grundstil als Standard-Stil haben, muss man einen Sentinel einfügen, der den Key weglässt und nur BasedOn ist (der Grundstil muss einen Key haben, damit man davon ableiten kann)
+
+\begin{lstlisting}[language=xml]
+<Style TargetType="Button" x:Key="BaseButton"><!--Nutzung über Key-->
+    <!-- verschiedene Setter -->
+</Style>
+<!-- Sentinel, gilt für alle Button -->
+<Style TargetType="Button" BasedOn="{StaticResource BaseButton}" />
+<!-- spezifischer Stil, Nutzung über Key -->
+<Style TargetType="Button" x:Key="DisabledButton" 
+    BasedOn="{StaticResource BaseButton}">
+    <!-- verschiedene Setter -->
+</Style>
+\end{lstlisting}
+
+Es gibt aber auch einen einfacheren Weg:
+\begin{itemize}
+    \item Default-Style belassen (TargetType ja, aber ohne ID)
+    \item Sentinel-Style weglassen
+    \item abgeleiteter Stil: \code{BasedOn="{StaticResource {x:Type Button}}"}
+\end{itemize}
+
+\begin{lstlisting}[language=xml]
+<Style TargetType="Button"><!--Nutzung über Key-->
+    <!-- verschiedene Setter -->
+</Style>
+<!-- spezifischer Stil, Nutzung über Key -->
+<Style TargetType="Button" x:Key="DisabledButton" 
+    BasedOn="{StaticResource {x:Type Button}}">
+    <!-- verschiedene Setter -->
+</Style>
+\end{lstlisting}

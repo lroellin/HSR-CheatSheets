@@ -1,0 +1,207 @@
+\section{Benutzerinteraktion}
+\paragraph{Routed Events} Events wandern vom Window den Visual Tree bis zum auslösenden Element. Routed Events besitzen meist ein Preview und ein normales Event. Das Preview Event wird ausgeführt, bevor es das Element erreicht, das normale Event, nachdem das Element das Event behandelt hat.
+\includegraphics[scale=0.25]{RoutedEvent1.png}
+\includegraphics[scale=0.25]{RoutedEvent2.png}
+Routed Events können mit \verb+Handeled = true+ unterbochen werden, sie werden dann nicht mehr weitergereicht. Man kann das Event direkt beim UI Element selbst behandeln.
+\begin{lstlisting}[language=xml]
+<Button Name="SaveButton"
+    PreviewMouseDown="SaveButton_OnPreviewMouseDown"
+    MouseDown="SaveButton_OnMouseDown">Save</Button>
+\end{lstlisting}
+Oder beim Parent Element
+\begin{lstlisting}[language=xml]
+<StackPanel PreviewMouseDown="StackPanel_OnPreviewMouseDown">
+    ...
+    <Button Name="SaveButton"
+        PreviewMouseDown="SaveButton_OnPreviewMouseDown"
+        MouseDown="SaveButton_OnMouseDown">Save</Button>
+    ...
+</StackPanel>
+\end{lstlisting}
+Eine andere Alternative wäre mit Attached Events.
+\begin{lstlisting}[language=xml]
+<StackPanel Button.Click="StackPanel_OnClick">
+    ...
+    <Button Name="SaveButton" Click="SaveButton_OnClick">Save</Button>
+    ...
+</StackPanel>
+\end{lstlisting}
+Beliebte Mouse Events:
+\begin{tabular}{ll}
+MouseDown & MouseEnter* \\
+MouseLeave* & MouseLeftButtonDown \\
+MouseLeftButtonUp & MouseMove \\
+MouseRightButtonDown & MouseRightButtonUp \\
+MouseUp & MouseWheel
+\end{tabular}
+Interessante Keyboard Events:
+\begin{tabular}{ll}
+KeyDown & KeyUp \\
+TextInput & 
+\end{tabular}
+Interessante Touch-Events:
+\begin{tabular}{ll}
+TouchDown & TouchEnter* \\
+TouchLeave* & TouchMove \\
+TouchUp & 
+\end{tabular}
+* haben kein Preview Event.
+\paragraph{RoutedEventArgs} RoutedEventArgs leiten von EventArgs ab. 
+\begin{itemize}
+\item \verb+Handled+: Boolean der aussagt, ob das Event behandelt wurde
+\item \verb+OriginalSource+: Quell-Element (Hit-Testing) welches das Event ausgelöst hat
+\item \verb+RoutedEvent+: Das RoutedEvent, welches mit diesem Objekt verknüpft ist
+\item \verb+Source+: Element, welches das Event rapportiert hat
+\end{itemize}
+Die OriginalSource kann ein Kind-Element des Source-Elements sein, das per Hit-Testing als 1. Adressat des Events bestimmt wurde. Die Source ist das Element im Logical Tree, welches das Event rapportiert hat. Beispielsweise beim Subscribe auf MouseDown auf einem Button, wird das Event vom Button rapportiert (Source), wurde aber eigentlich vom Rahmen ausgelöst (OriginalSource).
+\paragraph{Ableitende Klasse von RoutedEventArgs} Es gibt für verschiedene Input-Geräte Ableitungen von RoutedEventArgs. Auswahl von \verb+MouseEventArgs+:
+\begin{itemize}
+\item \textbf{LeftButton}: Zustand der linken Maustaste (Pressed/Released)
+\item \textbf{MiddleButton}
+\item \textbf{RightButton}
+\item \textbf{Delta}: Mausradbewegung (-120/120)
+\end{itemize}
+Auswahl von \verb+KeyEventArgs+:
+\begin{itemize}
+\item \textbf{Key}: Taste (Enum)
+\item \textbf{IsDown}
+\item \textbf{IsUp}
+\item \textbf{IsRepeat}
+\item \textbf{SystemKey}: Die zusätzliche Taste, falls ALT-Taste gedrückt wurde. Key steht in \verb+Key.System+
+\end{itemize}
+\subsection{Drag \& Drop}
+Drag \& Drop besteht aus 3 Phasen:
+\begin{enumerate}
+\item \textbf{Maustaste wird gedrückt:} Nach überschreiten einer Mindestdistanz wird die Aktion gestartet
+\item \textbf{Während des Ziehens:} Steuerelemente unterhalb des Zeigers müssen melden, ob sie als Ziel infrage kommen
+\item \textbf{Fallenlassen:} Steuerelement unterhalb des Mauszeigers muss eine Aktion mit dem bewegten Objekt durchführen
+\end{enumerate}
+Beispiel:
+\begin{lstlisting}
+public ObservableCollection<UserInfo> AvailableUsers { get; set; }
+public ObservableCollection<UserInfo> SelectedUsers { get; set; }
+public MainWindow()
+{
+    // Listen initialisieren und fuellen
+    InitializeComponent();
+    DataContext = this;
+}
+\end{lstlisting}
+\paragraph{Phase 1} Maustaste wird gedrückt
+\begin{lstlisting}[language=xml]
+<ListBox Name="AvailableListBox" ItemsSource="{Binding AvailableUsers}"
+    ItemTemplate="{StaticResource UserInfoTemplate}"
+    PreviewMouseLeftButtonDown="AvailableListBox_ OnPreviewMouseLeftButtonDown"
+    PreviewMouseLeftButtonUp="AvailableListBox_ OnPreviewMouseLeftButtonUp"
+    MouseMove="AvailableListBox_OnMouseMove" />
+\end{lstlisting}
+\begin{lstlisting}
+private Point? dragStartPosition = null;
+private void AvailableListBox_ OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+{
+    dragStartPosition = null;
+}
+private void AvailableListBox_ OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+{
+    dragStartPosition = e.GetPosition(this);
+}
+private bool IsMovementFarEnough(Point origPos, Point curPos)
+{
+    var minDistX = SystemParameters.MinimumVerticalDragDistance;
+    var minDistY = SystemParameters.MinimumHorizontalDragDistance;
+    return (Math.Abs(curPos.X - origPos.X) >= minDistX || Math.Abs(curPos.Y - origPos.Y) >= minDistY);
+}
+private void AvailableListBox_OnMouseMove(object sender, MouseEventArgs e)
+{
+    // gar nicht starten, wenn nicht (innerhalb Liste) geklickt
+    if (dragStartPosition == null)
+        return;
+    // aktuelle Position holen und pruefen, ob die Maus genug
+    // bewegt wurde, um die Bewegung als Drag zu interpretieren
+    var position = e.GetPosition(this);
+    if (!IsMovementFarEnough(dragStartPosition.Value, position))
+        return;
+    // Alles ok, drag kann starten
+    dragStartPosition = null;
+    StartDrag(AvailableListBox.SelectedItem as UserInfo);
+}
+private void StartDrag<T>(T obj)
+{
+    // Bereich definieren, auf dem der Drag-Vorgang gueltig ist
+    var dragScope = this.Content as FrameworkElement;
+    // Container fuer Nutzdaten (hier String)
+    var dragData = new DataObject(typeof(T), obj);
+    // Drag-Vorgang starten
+    DragDrop.DoDragDrop(dragScope, dragData, DragDropEffects.Move);
+}
+\end{lstlisting}
+Die \verb+DragDrop.DoDragDrop+ Methode blockiert die weitere Code-Ausführun bis die Operation beendet ist.
+\paragraph{Phase 2} Maus wird gezogen
+\begin{lstlisting}[language=xml]
+<ListBox Name="SelectedListBox" ItemsSource="{Binding SelectedUsers}"
+    ItemTemplate="{StaticResource UserInfoTemplate}"
+    AllowDrop="True"
+    DragOver="SelectedListBox_OnDragOver"
+    Drop="SelectedListBox_OnDrop" />
+\end{lstlisting}
+\begin{lstlisting}
+private void SelectedListBox_OnDragOver(object sender, DragEventArgs e)
+{
+    // Objekt auspacken
+    var data = e.Data.GetData(typeof(UserInfo)) as UserInfo;
+    // falls Objekt verfuegbar, dann kopieren, sonst keine Operation
+    e.Effects = data != null ? DragDropEffects.Copy : DragDropEffects.None;
+}
+\end{lstlisting}
+\paragraph{Phase 3} Objekt wird fallengelassen
+\begin{lstlisting}[language=xml]
+<ListBox Name="SelectedListBox" ItemsSource="{Binding SelectedUsers}"
+    ItemTemplate="{StaticResource UserInfoTemplate}"
+    AllowDrop="True"
+    DragOver="SelectedListBox_OnDragOver"
+    Drop="SelectedListBox_OnDrop" />
+\end{lstlisting}
+\begin{lstlisting}
+private void SelectedListBox_OnDrop(object sender, DragEventArgs e)
+{
+    // Objekt auspacken
+    var user = e.Data.GetData(typeof(UserInfo)) as UserInfo;
+    // Dank Data Binding reicht es nun, das UserInfo Objekt
+    // der ObservableCollection hinzuzufuegen:
+    SelectedUsers.Add(user);
+}
+\end{lstlisting}
+\paragraph{Drag \& Drop Events}
+\begin{itemize}
+\item \textbf{DragEnter:} Tritt auf, wenn dieses Element während einer Drag-Operation als Drag Target fungieren würde (Hit-Testing)
+\item \textbf{DragLeave:} Tritt auf, wenn dieses Element während einer Drag-Operation verlassen wird
+\item \textbf{DragOver:} Tritt auf, wenn diesem Element eine Drag-Operation stattfindet
+\item \textbf{Drop:} Tritt auf, wenn das Objekt der Drag-Operation auf dieses Element fallengelassen wird
+\item \textbf{GiveFeedback:} Gibt der Quelle der Drag-Operation eine Chance, visuelles Feedback zu geben
+\end{itemize}
+\section{Hintergrund-Operationen}
+Lange Dauernde Operationen sollten nicht im UI-Thread ausgeführt werden, sonden in ein eigenen Thread ausgelagert werden, sodass das UI nicht einfriert. Um den Benutzer zu informieren, dass irgendwas "{}arbeitet"{} sollte man folgendermassen vorgehen:
+\begin{enumerate}
+\item Visuelles Feedback geben (Spinner, Overlay, Popup), wenn nötig
+\item Starten eines Background-Threads als Reaktion auf ein Event, Kontrolle an UI Thread zurückgeben
+\item Bei Thread-Ende aus dem Background-Thread den UI-Thread benachrichtigen
+\end{enumerate}
+\paragraph{Visuelles Feedback} Das visuelle Feedback umfasst auch, dass der Benutzer dieselbe Operation nicht aus versehen zweimal ausführt. Dies verhindert man, indem man beispielsweise den Button deaktiviert etc. Um dem Benutzer mittzuteilen, dass etwas läuft, kann man beispielsweise ein Spinner auf den Button legen (realisierbar durch Grid innerhalb des Buttons). 
+%TODO: Eventuell noch XAML Beispiel
+\paragraph{Starten eines Background Threads} Dazu verwendet man am besten die Task Paralell Library. 
+\begin{lstlisting}
+Task.Run(() => {
+    //Background operation
+});
+\end{lstlisting}
+\paragraph{UI-Thread benachrichtigen} Mit der TPL kann man einen Dispatcher verwenden, um Code im UI-Thread auszuführen.
+\begin{lstlisting}
+Task.Run(() => {
+    //Background operation
+    Dispatcher.Invoke(() => {
+        // UI interaktion
+    });
+});
+\end{lstlisting}
+Falls Dispatcher nicht aus Code-Behind aufgerufen wird (Dispatcher ist eine Property der UI-Elemente wie Window, muss man stattdessen \verb+System.Windows.Threading.+
+\verb+Dispatcher.CurrentDispatcher+ verwenden.
