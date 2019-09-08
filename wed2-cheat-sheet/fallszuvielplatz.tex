@@ -1,0 +1,12 @@
+\section{Prototypen und mehrstufige Vererbung}
+\begin{minted}{js}
+function LeanCounter(cInit) { this.count = cInit }
+LeanCounter.prototype.inc = function (delta)
+  this.count += delta
+}
+const c = new LeanCounter(13)
+c.inc(15)
+\end{minted}
+% TODO Private Methoden (kann ich mir gut als kurze Frage vorstellen, 10 26) LOW PRIO
+
+% Mehrstufige Vererbung (10 27/28) KURZ/LOW PRIO
