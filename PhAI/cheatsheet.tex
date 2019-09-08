@@ -1,0 +1,75 @@
+% !TeX spellcheck = de_CH
+\documentclass[
+a4paper,
+oneside,
+landscape, 
+fontsize=8pt,
+]{scrartcl}
+
+% language
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% tables
+\usepackage{tabu}
+\usepackage{booktabs}
+\tabulinesep=1.2mm
+
+% images
+\usepackage{graphicx}
+
+% layout
+\usepackage[landscape]{geometry}
+\geometry{tmargin=5mm,bmargin=5mm,lmargin=5mm,rmargin=5mm}
+\usepackage{multicol}
+\setlength{\columnsep}{1cm}
+
+% math
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+
+% include pdf as-is
+\usepackage{pdfpages}
+ 
+% title
+\title{PhAI: Physik Anwendungen für Informatiker}
+\subject{Cheatsheet}
+\author{Michael Wieland, Demian Thoma \& Lukas Röllin}
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{multicols*}{2}
+	
+\tableofcontents
+\clearpage
+	
+\input{grundlagen.tex}
+
+\clearpage
+
+\input{mechanik/_mechanik.tex}
+
+
+\clearpage
+
+\input{elektrik.tex}
+
+\clearpage
+
+\input{differentialgleichung.tex}
+
+\clearpage
+
+\input{fehlendes.tex}
+
+
+\end{multicols*}
+
+\end{document}

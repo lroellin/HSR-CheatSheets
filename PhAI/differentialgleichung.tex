@@ -1,0 +1,63 @@
+\section{Differntialgleichungen}
+
+\subsection{Analytische Lösung}
+\begin{enumerate}
+    \item Homogenelösung $ y^{\prime \prime}(t) + by^{\prime}(t) + cy(t) = 0 $
+    \item Partikulärlösung  $ y^{\prime \prime}(t) + by^{\prime}(t) + cy(t) = f(n) $
+    \item Vollständige $ y(t) = y_{p}(t) + y_{h}(t) $
+\end{enumerate}
+
+\subsubsection{Vorgehen anhand Beispiel}
+\begin{enumerate}
+    \item Vorgegeben Differntialgleichung $ y^{\prime} + ay(t) = b $
+    \item Homogenelösung suchen  $ y^{\prime} + ay(t) = 0 $
+    \begin{enumerate}
+        \item Ansatz wird vorgegeben $y_{h} = Ce^{kt}$
+        \item Benötigte Ableitungen von Ansatz $y_{h}$ bilden 
+        \item Ableitungen in Homogenelösung einsetzten und auflösen nach Variable
+        \item $y_{h}$ = Ansatz und k durch Lösung von oben ersetzt
+    \end{enumerate}
+    \item Partikulärlösung suchen  $ y^{\prime} + ay(t) = b $
+        \begin{enumerate}
+        \item Ansatz wird vorgegeben $y_{p} =\frac{b}{a}$
+        \item Benötigte Ableitungen von Ansatz $y_{p}$ bilden 
+        \item Ableitungen in Partikulärlösung einsetzten und auflösen
+        \item $y_{p}$ = Ansatz und Variable durch Lösung von oben ersetzt
+    \end{enumerate}
+    \item Vollständige $ y(t) = y_{p}(t) + y_{h}(t) $
+\end{enumerate}
+
+\subsection{Nummerische Lösung}
+\subsubsection{1-Ordnung}
+\textbf{Euler-Verfahren}
+$$ f^{\prime}(t) \approx \frac{f(t+\Delta t) - f(t)}{\Delta t} $$
+$$ f^{\prime}(t) \approx \frac{f_{n+1}-f_{n}}{\Delta t}$$
+
+\textbf{Vorgehen}
+\begin{enumerate}
+    \item Differentialgleichung aufstellen / vorgegeben
+    \item Ableitung durch Formel oben ersetzten
+    \item Auflösen nach $f_{n+1}$
+\end{enumerate}
+
+\subsubsection{2-Ordnung}
+Gegeben Differentialgleichung mit 2ter Ableitung (Nach 2te Ableitung aufgelöst)
+$$ y^{\prime\prime} = v^{\prime} = g-\frac{k}{m} y(t) $$
+
+Definiere Zwischenschritt
+$$ y^{\prime} = v(t) $$
+
+Darstellen als Vektoren/Matrizen-Gleichungssystem 
+$$ U^{\prime}(t) = MU(t) + b $$
+
+Vektor definieren (1 Reihe Stammfunktion, 2 Reihe 1 Ableitung)
+$$ \vec{U}(t) = \begin{bmatrix} y(t) \\ v(t) \end{bmatrix} $$
+ 
+Matrix definieren(1 Spalte Faktoren für  Stammfunktion, 2 Spalte Faktoren für 1 Ableitung, 1 Reihe Zwischenschritt, 2 Reihe Differentialgleichung)
+
+$$ M = \begin{bmatrix} 0 & 1 \\ -\frac{k}{m} & 0 \end{bmatrix} $$
+
+Konstantenvektor definieren (Konstanten einsetzten: 1 Reihe Hilfsfunktion, 2 Reihe Differentialgleichungen
+ $$ \vec{b} = \begin{bmatrix} 0 \\ g \end{bmatrix} $$
+
+Nun kann nach 1-Ordnung vorgegangen werden

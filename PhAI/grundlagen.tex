@@ -1,0 +1,147 @@
+\section{Grundlagen}
+\subsection{Konstanten}
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l X l }
+		\toprule
+		Konstante & Bedeutung & Wert \\
+		\midrule
+		$u$ & Atomare Massenkonstante & $1.660538921(73) \cdot 10^{-27} kg$\\
+		$N_A$ & Avogadro Konstante = 1mol & $6.022141 29 (27) \cdot 10^{23} \frac{1}{mol}$  \\
+		$k_b$ & Boltzmann-Konstante & $1.3806488(13) \cdot 10^{-23}\frac{J}{K}$  \\
+		$R$ & Universelle Gaskonstante & $N_A \cdot k_B = 8.3144621 (75) \frac{J}{mol \cdot K}$ \\
+		$g$ & Normalfallbeschleunigung(Schwerkraft auf der Erde) & $9.80665\frac{m}{s^2}$ \\
+		$T_n$ & Normtemperatur & $273.15K$  \\
+		$\sigma$ & Stefan-Boltzmann-Konstante & $5.670373(21) \cdot 10^{-8} \frac{W}{(m^2 \cdot K^4)}$  \\
+		$c$ & Lichtgeschwindigkeit & $3 \cdot 10^8 \frac{m}{s}$  \\
+	\end{tabu}
+\end{tabbing}
+
+\subsection{Umrechnungen}
+Physikalische Dimension: Masse, Länge, Zeit, Temperatur, Stromstärke, Lichtstärke, Stoffmenge.
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l X}
+		\toprule
+		Volumen & $1cm^3 = (10^{-2}m)^3 = 10^{-6}m^3$ \\ 
+		Fläche &  $1cm^2 = (10^{-2}m)^2 = 10^{-4}m^2$ \\
+		Geschwindigkeit & $1\frac{m}{s} = 3.6\frac{km}{h} = 1\frac{km}{h} = 0.277 \frac{m}{s}$ \\
+		Grad in Fahrenheit & $T_F = \frac{9}{5} \cdot T_C + 32 \Rightarrow 0^\circ\text{C} = 32F$ \text{und} $100^\circ\text{C} = 212F$ \\ 
+		Grad in Kelvin & $T_K = T_C + 273.15$ \\
+		Bar in Pascal & $1 bar = 100'000 \frac{N}{m^2} = 100'000 Pa (=10^5)$ \\
+		kWh in kJ & $1kWh = 1000W \cdot 3600 s= 3.6 \cdot 10^6 Ws = 3.6 MJ = 3600kJ = 3.6 \cdot 10^6 J$ \\
+		kcal in Joule & $1kcal = 4184 J$ \\
+		Watt in PS & $1KW = 1.36PS$ und $1PS = 735.499W$ \\
+		Bogenmass (rad) in Gradmass & $2\pi \mathrm{rad} = 360^\circ $\\
+		Steigung in Prozent/Grad & $\text{Steigungswinkel}(^\circ) = arctan( Steigung(\%) / 100 )$ \\	
+		\bottomrule
+	\end{tabu}
+\end{tabbing}
+
+\subsection{Planimetrie und Stereometrie}
+
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l l X l X}
+		\toprule
+		\textbf{Trapez} & Fläche & $A = \frac{a + c}{2} \cdot h$ & 
+		Umfang & $U = 2 \cdot h  + a + c$ \\
+	\end{tabu}
+\end{tabbing}
+
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l l X l X}
+		\textbf{Dreieck} & Fläche & $A = \frac{g \cdot h}{2}$ & 
+		Sinus & $\sin(\alpha) = \frac{G}{H}$ \\
+		& Cosinus & $\cos(\alpha) = \frac{A}{H}$ &
+		Tangens &  $\tan(\alpha) = \frac{G}{A}$ \\
+	\end{tabu}
+\end{tabbing}
+
+
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l l X l X}
+		\textbf{Kreis} & Fläche & $A = r^2 \cdot \pi$ & 
+		Umfang & $U = 2 \cdot r \cdot \pi$ \\
+	\end{tabu}
+\end{tabbing}
+
+
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l l X l X}
+		\textbf{Kreis} &  Fläche & $A = \frac{d^2 \cdot \pi}{4}$ &
+		Volumen & $V = r^2 \cdot \pi \cdot h $ \\
+		& Mantelfläche & $M = d \cdot \pi \cdot h$ &
+		Oberfläche & $O = M + 2 \cdot A $ \\
+		\bottomrule
+	\end{tabu}
+\end{tabbing}
+
+\paragraph{Kegel}
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l X l X}
+		\toprule
+		Fläche & $A = \frac{3 \cdot V}{h}$ &
+		Volumen & $V = \frac{A \cdot h}{3}$ \\
+		Höhe & $h = \frac{3 \cdot V}{A}$ & & \\
+		\bottomrule
+	\end{tabu}
+\end{tabbing}
+
+\subsection{Vektoren}
+
+\begin{itemize}
+	\item Beim Vektorprodukt entsteht ein neuer Vektor, der senkrecht auf den beiden Ausgangsvektoren steht, wenn diese linear unabhängig sind.
+	\begin{itemize}
+		\item Spannen die beiden Ausgangsvektoren ein Parallelogramm auf, so ist der Betrag des Vektorprodukts gleich dem Flächeninhalt des Parallelogramms.
+	\end{itemize}
+	\item Das Skalarprodukt zweier Vektoren ist null, wenn sie senkrecht zueinander stehen.
+	\item Die Multiplikation zweier Vektoren (Skalarprodukt) ergibt eine reelle Zahl (Skalar)
+\end{itemize}
+
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l X}
+		\toprule
+		Vektorprodukt / Kreuzprodukt & $
+		\vec{a}\times\vec{b}
+		=
+		\begin{pmatrix}a_x \\ a_y \\ a_z\end{pmatrix}
+		\times
+		\begin{pmatrix}b_x \\ b_y \\ b_z \end{pmatrix}
+		=
+		\begin{pmatrix}
+		a_yb_z - a_zb_y \\
+		a_zb_x - a_xb_z \\
+		a_xb_y - a_yb_x
+		\end{pmatrix}\,.
+		$ \\
+		Eingeschlossener Winkel & $\sin(\alpha) = \frac{|\vec{a}|\, |\vec{b}|}{|\vec{a}\times\vec{b}|}$\\
+		Skalarprodukt & $\vec a \cdot \vec b = a_x b_x + a_y  b_y +  a_z  b_z$ \\
+		Länge eines Vektors (Betrag) & $| \vec a | = \sqrt{\vec a\cdot \vec a} = \sqrt{{a_x}^2+{a_y}^2+{a_z}^2}$ \\
+		Eingeschlossener Winkel & $\cos (\alpha) = \frac{\vec a\cdot\vec b}{|\vec a|\,|\vec b|}$ \\
+		\bottomrule
+	\end{tabu}
+\end{tabbing}
+
+
+\subsection{SI-Einheiten}
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l l X}
+		\toprule
+		Einheit & Zeichen & Einheit für \\
+		\midrule
+		Ampere  & A & elektr. Stromstärke \\
+		Coulomb & cd & elektr. Ladung \\
+		Grad Celsius & $^\circ C$ & Temperatur \\
+		Hertz & Hz & Frequenz \\
+		Joule & $J = N \cdot m = W \cdot s$ & Energie, Arbeit, Wärmemenge \\
+		Kelvin & K & absolute Temperatur \\
+		Kilogramm & kg & Masse \\
+		Meter & m & Länge \\
+		Mol & mol & Stoffmenge \\
+		Newton & $N = \frac{kg*m}{s^2}$ & Kraft \\
+		Ohm & $\Omega = \frac{V}{A}$ & elektr. Widerstand \\
+		Pascal & $Pa = \frac{N}{m^2}$ & Druck, Spannung \\
+		Sekunde & s & Zeit\\
+		Volt & $V = \frac{W}{A}$ & elektr. Spannung\\
+		Watt & $W = \frac{J}{s}$ & Leistung \\
+		\bottomrule
+	 \end{tabu}
+\end{tabbing}

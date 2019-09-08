@@ -1,0 +1,140 @@
+\section{Sammelsurium}
+
+\subsection{Umrechnungen/Einheiten}
+\paragraph{Einheiten}
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l l X}
+		\toprule
+		Vorsatz & Vorzeichen & Faktor \\
+		\midrule
+		Atto  & a & $10^{-18}$ \\
+		Femto & f & $10^{-15}$ \\
+		Pico & p & $10^{-12}$ \\
+		Nano & n & $10^{-9}$ \\
+		Mikro & $\mu$ & $10^{-6}$ \\
+		Milli & m & $10^{-3}$ \\
+		Zenti & c & $10^{-2}$ \\
+		Dezi & d & $10^{-1}$ \\
+		Hekto & h & $10^{2}$ \\
+		Kilo & k & $10^{3}$ \\
+		Mega & M & $10^{6}$ \\
+		Giga & G & $10^{9}$ \\
+		Tera & T & $10^{12}$\\
+		Peta & P & $10^{15}$\\
+		Exa & E & $10^{18}$ \\
+		\bottomrule
+	 \end{tabu}
+\end{tabbing}
+
+
+\newpage
+
+\paragraph{Translation vs. Rotation} (TODO an einen Ort schieben, wo man es auch findet...)
+
+
+
+\section{Gravitation}
+
+\begin{tabbing}
+	\begin{tabu} to \linewidth {l X}
+		\toprule
+		Name & Formel \\
+		\midrule
+		Gravitationskraft  & $ F_{G}(r) = G\frac{m_{1}m_{2}}{r^2} $ \\
+		Gravitationspotential & $V_{G}(r) =  -G\frac{m_{1}m_{2}}{r} $ \\
+		Bedingung geschlossene Bahn (Kin + pot kleiner 0) & $ \frac{m}{2} v^2 - G\frac{mM}{r}<0$ \\
+		\bottomrule
+	 \end{tabu}
+\end{tabbing}
+
+
+\section{Sonstiges}
+
+Dichte $$\rho = \frac{m}{V}$$
+Mitternachtsformel $$\frac{-b \pm \sqrt{b^{2}-4ac}}{2a}$$
+
+\paragraph{RPM zu $\omega$}
+
+RPM = Rounds per Minute, RPS = Rounds per Second
+
+$$\omega = 2\pi * rps = 2\pi * \frac{rpm}{60s}$$
+
+Zentrifuge mit $7.5*10^4 rpm$; $\omega = \frac{7.5*10^4 rpm * 2\pi}{60s} = 7853.98 \frac{rad}{s}$
+
+\paragraph{Joule, Nm, Ws}
+
+$$1 J = 1 Nm = 1 \frac{W}{s}$$
+
+\paragraph{kW zu PS}
+
+$$1kW = 1.36PS$$
+
+$$116 PS = 85.29kW$$
+
+\paragraph{kcal zu Joule}
+
+$$1 kcal = 4184 J; 1 cal = 4.184J$$
+
+\paragraph{Looping-Formel}
+
+$$E_{pot0} = E_{kin} + E_{pot1}$$
+$$E_{pot0} = m*g*h = m*g*(h_0 + h)$$
+$$E_{pot1} = m*g*h = m*g*d = m*g*2r$$
+$$E_{kin} = \frac{1}{2}*m*v^2$$
+$$a_z = \frac{v^2}{r} \rightarrow a_z = g \rightarrow v^2 = g*r$$
+$$E_{kin} = \frac{1}{2}*m*v^2 = \frac{1}{2}*m*g*r$$
+$$E_{pot0} = E_{kin} + E_{pot1}$$
+$$m*g*(h_0+h) = \frac{1}{2}*m*g*r + m*g*2r$$
+$$h = \frac{5}{2}r-h_0$$
+
+Falls Höhe $h$ vorgegeben:
+
+$$F_N = m*a$$
+$$a_z = \frac{v^2}{r} = g+a = g+\frac{F_N}{m}$$
+$$\frac{v^2}{r} = g+\frac{F_N}{m}$$
+
+\subsection{Looping}
+Damit der Wagen den höchsten Punkt im Looping erreicht muss die kinetische Energie $E_{\text{kin}_0}$ des Wagens vor dem Looping gleich gross sein wie die Potentielle Energie $E_{\text{pot}_0}$, die es braucht um im Looping den höchsten Punkt zu erreichen:
+
+
+\begin{equation*}
+\begin{aligned}
+h &= \text{Höhe des Loopings (Durchmesser)} \\
+E_{\text{kin}_0} &= \frac{1}{2}  m v_0^2 \\
+E_{\text{pot}_0} &= mgh \\
+E_{\text{kin}_0} &= E_{\text{pot}_0} 
+\Leftrightarrow \frac{1}{2}  m v_0^2 = mgh 
+\Leftrightarrow v_0 = \sqrt{2gh} \\
+\end{aligned}
+\end{equation*}
+
+Jetzt haben wir erst berechnet wie schnell der Wagen sein muss, damit er nach oben kommt. Oben ist die Geschwindigkeit jetzt aber $0 m/s$, er fällt also wieder Runter. Darum müssen wir jetzt noch ausrechnen wie schnell der Wagen sein muss damit er nicht runterfällt. Das ist der Fall wenn die Zentrifugalkraft $F_Z$ mindestens so hoch ist wie die Erdanziehungskraft $F_G$.
+
+
+\begin{equation*}
+\begin{aligned}
+F_Z &= \frac{mv_1^2}{r} \\
+F_G &= mg \\
+F_Z &= F_G 
+\Leftrightarrow \frac{mv^2}{r} = mg 
+\Leftrightarrow v_1 = \sqrt{g * r} = \sqrt{g * \frac{h}{2}}
+\end{aligned}
+\end{equation*}
+
+Die Anfangsgeschwindigkeit muss jetzt eine genug hohe kinetische Energie $E_{\text{kin}_0}$ haben, um nach oben zu kommen $E_{\text{pot}_0}$ und genug schnell zu sein um nicht Runterzufallen $E_{\text{kin}_1}$:
+\begin{equation*}
+\begin{aligned}
+E_{\text{kin}_0} &= E_{\text{kin}_1} + E_{\text{pot}_0} \\
+\Leftrightarrow \frac{1}{2} m v_0^2 &= \frac{1}{2} m v_1^2 + mgh &| \text{ $v_1$ einsetzen} \\
+\Leftrightarrow \frac{1}{2} m v_0^2 &= \frac{1}{2} m (\sqrt{g\frac{h}{2}})^2 + mgh \\
+\Leftrightarrow v_0 &= \sqrt{\frac{5}{2}gh}
+\end{aligned}
+\end{equation*}
+
+\paragraph{Elastische Kollisionen (Vereinfachung)}
+
+Siehe https://www.khanacademy.org/science/physics/linear-momentum/elastic-and-inelastic-collisions/v/deriving-the-shortcut-to-solve-elastic-collision-problems und https://www.khanacademy.org/science/physics/linear-momentum/elastic-and-inelastic-collisions/v/how-to-use-the-shortcut-for-solving-elastic-collisions
+
+\paragraph{Kopieren}
+
+Evtl. Ableitungs-/Integralregeln aus Analysis? (abtippen)
