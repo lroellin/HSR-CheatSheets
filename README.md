@@ -1,5 +1,5 @@
 # HSR-CheatSheets
-HSR Cheat Sheet Sources. PDFs available on Studentenportal. Should build on Overleaf.
+HSR Cheat Sheet Sources. PDFs available on Studentenportal. Should build on Overleaf. Available as PDF at https://studentenportal.ch/users/85/lroellin/ (might need to log in). 
 
 # Authorship
 
